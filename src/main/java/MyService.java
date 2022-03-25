@@ -1,38 +1,51 @@
-import fr.polytech.grpc.simple.OpGrpc;
-import fr.polytech.grpc.simple.Service.*;
+import fr.polytech.grpc.proto.ProtoGrpc;
+import fr.polytech.grpc.proto.Service.*;
 
 import io.grpc.stub.StreamObserver;
 
+import java.util.Map;
 
 
-public class MyService extends OpGrpc.OpImplBase {
+public class MyService extends ProtoGrpc.ProtoImplBase {
 
     public MyService() {
     }
 
     @Override
-    public void calculate(Input input, StreamObserver<Result> responseObserver) {
-        int int1 = input.getInt1();
-        int int2 = input.getInt2();
-        Operation op =  input.getOperation();
+    public void handle(Request input, StreamObserver<Reply> responseObserver) {
+        Info info = input.getInfo();
+        Map<String, Data> dataMap = input.getDataMap();
 
-        System.out.println("MyService " + this + "  " + int1 + op + int2);
+        StringBuilder stb = new StringBuilder("=====RECEIVED MESSAGE FROM CLIENT=====");
+        stb.append("Sender ").append(info.getSender()).append("\n");
+        stb.append("Timestamp: ").append(info.getTimestamp()).append("\n");
+        stb.append("ID: ").append(info.getId()).append("\n");
+        stb.append("\n");
+        stb.append("---DECODED DATA MAP---").append("\n");
+        stb.append(handleDataMap(dataMap)).append("\n");
 
-        long res = Long.MAX_VALUE;
+        // System.out.println("MyService " + this + "  " + int1 + op + int2);
 
-        switch (op){
-            case ADD -> res = int1 + int2;
-            case SUB -> res = int1 - int2;
-            case MUL -> res = int1 * int2;
-            case DIV -> res = int1 / int2;
-            case UNRECOGNIZED -> System.out.println("Operation Unrecognized!");
-        }
 
-        Result reply = Result.newBuilder()
-                .setResult(res)
+        Reply reply = Reply.newBuilder()
+                .setInfo(info)
+                .setHandled(dataMap.size())
+                .set
                 .build();
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
+    }
+
+    private String handleDataMap(Map<String, Data> dataMap) {
+        StringBuilder stb = new StringBuilder();
+        for (Map.Entry<String, Data> entry : dataMap.entrySet()) {
+            Data data = entry.getValue();
+            stb.append(entry.getKey()).append(":").append(data.getData1())
+                    .append(", ").append(data.getData2())
+                    .append(", ").append(data.getData3List()).append("\n");
+        }
+
+        return stb.toString();
     }
 
 }
