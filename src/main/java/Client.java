@@ -1,6 +1,5 @@
 import fr.polytech.grpc.proto.Service.*;
 import fr.polytech.grpc.proto.ProtoGrpc;
-import fr.polytech.grpc.proto.Service.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
