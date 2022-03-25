@@ -37,7 +37,7 @@ public class Client {
         Info i = Info.newBuilder().setSender("Dupont").setTimestamp(0101010).setId(01).build();
 
         //Data d1 = Data.newBuilder().setData1((float)1.5).setData2(true).setData3(new ArrayList<int>(Arrays.asList(1,2,3)));
-        Data.Builder d1 = Data.newBuilder().setData1((float)1.5).setData2(true).addAllData3(new ArrayList<int>(Arrays.asList(1,2,3)));
+        Data.Builder d1 = Data.newBuilder().setData1((float)1.5).setData2(true).addAllData3(new ArrayList<Integer>(Arrays.asList(1,2,3)));
 
 
         Map<String, Data> d = (Map<String, Data>) new HashMap<>().put("test",d1);
