@@ -24,15 +24,24 @@ public class MyService extends ProtoGrpc.ProtoImplBase {
         stb.append("---DECODED DATA MAP---").append("\n");
         stb.append(handleDataMap(dataMap)).append("\n");
 
-        // System.out.println("MyService " + this + "  " + int1 + op + int2);
+        System.out.println("MyService " + this + "  " + stb);
 
+        long now = System.currentTimeMillis()/1000L;
 
-        Reply reply = Reply.newBuilder()
+        Reply.Builder replyBuilder = Reply.newBuilder()
+                .setInfo(Info.newBuilder().setSender("Server").setTimestamp(now).setId(1))
                 .setInfo(info)
-                .setHandled(dataMap.size())
-                .set
-                .build();
-        responseObserver.onNext(reply);
+                .setHandled(dataMap.size());
+
+        if (dataMap.isEmpty()){
+            replyBuilder.setMessage("ERROR: NO DATA GIVEN");
+            replyBuilder.setStatus(0);
+        } else{
+            replyBuilder.setMessage("HANDELED " + dataMap.size());
+            replyBuilder.setStatus(-1);
+        }
+
+        responseObserver.onNext(replyBuilder.build());
         responseObserver.onCompleted();
     }
 
