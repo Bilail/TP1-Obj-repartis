@@ -16,8 +16,8 @@ public class MyService extends ProtoGrpc.ProtoImplBase {
         Info info = input.getInfo();
         Map<String, Data> dataMap = input.getDataMap();
 
-        StringBuilder stb = new StringBuilder("=====RECEIVED MESSAGE FROM CLIENT=====");
-        stb.append("Sender ").append(info.getSender()).append("\n");
+        StringBuilder stb = new StringBuilder("\n=====RECEIVED MESSAGE FROM CLIENT=====\n");
+        stb.append("Sender: ").append(info.getSender()).append("\n");
         stb.append("Timestamp: ").append(info.getTimestamp()).append("\n");
         stb.append("ID: ").append(info.getId()).append("\n");
         stb.append("\n");
@@ -30,15 +30,12 @@ public class MyService extends ProtoGrpc.ProtoImplBase {
 
         Reply.Builder replyBuilder = Reply.newBuilder()
                 .setInfo(Info.newBuilder().setSender("Server").setTimestamp(now).setId(1))
-                .setInfo(info)
                 .setHandled(dataMap.size());
 
-        if (dataMap.isEmpty()){
+        if (dataMap.size() == 0){
             replyBuilder.setMessage("ERROR: NO DATA GIVEN");
-            replyBuilder.setStatus(0);
         } else{
-            replyBuilder.setMessage("HANDELED " + dataMap.size());
-            replyBuilder.setStatus(-1);
+            replyBuilder.setStatus(400); // OK HTTP
         }
 
         responseObserver.onNext(replyBuilder.build());
@@ -49,7 +46,7 @@ public class MyService extends ProtoGrpc.ProtoImplBase {
         StringBuilder stb = new StringBuilder();
         for (Map.Entry<String, Data> entry : dataMap.entrySet()) {
             Data data = entry.getValue();
-            stb.append(entry.getKey()).append(":").append(data.getData1())
+            stb.append(entry.getKey()).append(": ").append(data.getData1())
                     .append(", ").append(data.getData2())
                     .append(", ").append(data.getData3List()).append("\n");
         }
